@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { UserService } from 'src/entities/user/user.service';
+import { UserService } from 'src/repositories/user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
