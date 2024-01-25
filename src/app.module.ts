@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './repositories/user/user.entity';
+import { SellerModule } from './seller/seller.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { User } from './repositories/user/user.entity';
             synchronize: true,
         }),
         AuthModule,
+        SellerModule,
     ],
     controllers: [AppController],
     providers: [AppService],

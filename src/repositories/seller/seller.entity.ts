@@ -1,17 +1,18 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import {
     MediaFile,
     DescriptorAdditionalDesc,
     Image,
     Attribute,
 } from 'src/shared/types';
+import { LocationEntity } from '../location/location.entity';
 
 @Entity()
 export class SellerEntity {
     @PrimaryColumn()
     id: string;
 
-    @Column()
+    @Column({ default: 'local-retail' })
     category_id: string;
 
     @Column({ default: true })
@@ -38,4 +39,7 @@ export class SellerEntity {
 
     @Column({ type: 'jsonb', array: true })
     attributes: Attribute[];
+
+    @OneToMany(() => LocationEntity, (location) => location.seller)
+    locations: LocationEntity[];
 }

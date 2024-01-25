@@ -13,6 +13,6 @@ export class UserService {
     async login(uid: string) {
         const user = new User();
         user.id = uid;
-        await this.userRepository.upsert(user, ['id']);
+        return await this.userRepository.upsert(user, ['id']);
     }
 }

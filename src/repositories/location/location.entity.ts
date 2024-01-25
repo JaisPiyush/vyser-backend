@@ -1,6 +1,13 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    Index,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { DescriptorEntity } from '../common/descriptor.entity';
 import { Point } from 'geojson';
+import { SellerEntity } from '../seller/seller.entity';
 
 @Entity()
 export class LocationEntity extends DescriptorEntity {
@@ -33,4 +40,7 @@ export class LocationEntity extends DescriptorEntity {
         nullable: true,
     })
     gps: Point;
+
+    @ManyToOne(() => SellerEntity, (seller) => seller.locations)
+    seller: SellerEntity;
 }
