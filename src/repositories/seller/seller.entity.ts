@@ -6,6 +6,7 @@ import {
     Attribute,
 } from 'src/shared/types';
 import { LocationEntity } from '../location/location.entity';
+import { ItemEntity } from '../item/item.entity';
 
 @Entity()
 export class SellerEntity {
@@ -42,4 +43,7 @@ export class SellerEntity {
 
     @OneToMany(() => LocationEntity, (location) => location.seller)
     locations: LocationEntity[];
+
+    @OneToMany(() => ItemEntity, (item) => item.seller)
+    items: ItemEntity[];
 }
