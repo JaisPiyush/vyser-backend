@@ -6,11 +6,15 @@ import {
 } from '@nestjs/common';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
+import { SellerService } from 'src/repositories/seller/seller.service';
 import { UserService } from 'src/repositories/user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private sellerService: SellerService,
+    ) {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
@@ -23,6 +27,10 @@ export class AuthGuard implements CanActivate {
             const decodedToken = await getAuth(app).verifyIdToken(token);
             const user = await this.userService.login(decodedToken.uid);
             request['user'] = user;
+            const seller = await this.sellerService.get(user.id);
+            if (seller) {
+                request['seller'] = seller;
+            }
         } catch (e) {
             throw new UnauthorizedException();
         }

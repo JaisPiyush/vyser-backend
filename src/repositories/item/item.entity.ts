@@ -22,8 +22,16 @@ export class ItemEntity {
     @Column()
     name: string;
     @Index({ fulltext: true })
-    @Column({ type: 'tsvector' })
+    @Column({
+        type: 'tsvector',
+        transformer: {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            from: (value: string) => `to_tsvector('english', :text)`,
+            to: (value: string) => value,
+        },
+    })
     name_tsv: string;
+    @Index()
     @Column()
     product_set_reference: string;
     // Descriptor

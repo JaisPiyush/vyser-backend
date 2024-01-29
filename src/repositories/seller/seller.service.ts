@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SellerEntity } from './seller.entity';
 import { LocationService } from '../location/location.service';
-import { CreateSellerDto } from './seller.dto';
+import { CreateSellerDto, UpdateSellerDto } from './seller.dto';
 
 @Injectable()
 export class SellerService {
@@ -31,5 +31,9 @@ export class SellerService {
                 locations: true,
             },
         });
+    }
+
+    async update(seller: SellerEntity, updateDto: UpdateSellerDto) {
+        await this.sellerRepository.update(seller.id, updateDto);
     }
 }

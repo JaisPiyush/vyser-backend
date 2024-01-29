@@ -11,8 +11,12 @@ export class UserService {
     ) {}
 
     async login(uid: string) {
+        const _user = await this.userRepository.findOne({ where: { id: uid } });
+        if (_user) {
+            return _user;
+        }
         const user = new User();
         user.id = uid;
-        return await this.userRepository.upsert(user, ['id']);
+        return await this.userRepository.save(user);
     }
 }

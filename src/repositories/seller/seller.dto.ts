@@ -32,3 +32,7 @@ export class SellerDto extends CreateSellerDto {
     @IsNotEmpty()
     locations: LocationDto[];
 }
+
+export class UpdateSellerDto {
+    is_store_active?: boolean;
+}

@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './repositories/user/user.entity';
 import { SellerModule } from './seller/seller.module';
+import { ItemModule } from './item/item.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
     imports: [
@@ -13,7 +15,7 @@ import { SellerModule } from './seller/seller.module';
         TypeOrmModule.forRoot({
             type: 'postgres',
             host: process.env.DB_HOST,
-            port: parseInt(process.env.PORT || '5342'),
+            port: parseInt(process.env.DB_PORT || '5342'),
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
@@ -22,6 +24,8 @@ import { SellerModule } from './seller/seller.module';
         }),
         AuthModule,
         SellerModule,
+        ItemModule,
+        SearchModule,
     ],
     controllers: [AppController],
     providers: [AppService],
