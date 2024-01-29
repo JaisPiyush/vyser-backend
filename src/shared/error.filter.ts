@@ -22,7 +22,7 @@ export class ErrorFilter implements ExceptionFilter {
             exception instanceof HttpException
                 ? exception.getStatus()
                 : HttpStatus.INTERNAL_SERVER_ERROR;
-
+        console.error(exception);
         const responseBody = {
             code: httpStatus,
             path: httpAdapter.getRequestUrl(ctx.getRequest()),
