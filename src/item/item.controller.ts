@@ -43,7 +43,12 @@ export class ItemController {
 
     @Put()
     @HttpCode(201)
-    async update(@Body() updateItemDto: UpdateItemDto) {
-        return { items: [await this.itemService.update(updateItemDto)] };
+    async update(
+        @Body() updateItemDto: UpdateItemDto,
+        @GetSeller() seller: SellerEntity,
+    ) {
+        return {
+            items: [await this.itemService.update(seller, updateItemDto)],
+        };
     }
 }

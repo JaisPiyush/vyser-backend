@@ -20,6 +20,13 @@ export class ItemService {
         return createdItem;
     }
 
+    async createItemInBulk(seller: SellerEntity, items: CreateItemDto[]) {
+        const createdItems = await this.itemRepository.save(
+            items.map((item) => ({ ...item, seller })),
+        );
+        return createdItems;
+    }
+
     async findAllBySeller(seller: SellerEntity) {
         return await this.itemRepository.find({
             where: { seller },
@@ -36,8 +43,16 @@ export class ItemService {
         });
     }
 
-    async update(item: UpdateItemDto) {
-        await this.itemRepository.update(item.id, item);
+    async update(seller: SellerEntity, item: UpdateItemDto) {
+        await this.itemRepository
+            .createQueryBuilder()
+            .where('id = :id AND seller_id = :seller_id', {
+                id: item.id,
+                seller_id: seller.id,
+            })
+            .update(ItemEntity)
+            .set(item)
+            .execute();
         return await this.findByItemId(item.id);
     }
 }
