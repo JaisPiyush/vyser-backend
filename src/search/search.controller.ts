@@ -12,8 +12,6 @@ export class SearchController {
 
     @Post('vision/global')
     async globalVisionSearch(@Body('image') image: string) {
-        return {
-            items: [await this.searchService.visionSearchItem(image)],
-        };
+        return await this.searchService.visionSearchItem(image);
     }
 }

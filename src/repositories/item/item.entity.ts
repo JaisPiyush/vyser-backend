@@ -62,7 +62,7 @@ export class ItemEntity {
     reorder_level: number;
     @Column({ default: true })
     is_active: boolean;
-    @Column({ array: true })
+    @Column({ type: 'varchar', array: true, default: [] })
     category_ids: string[];
     @Column({ type: 'jsonb', array: true })
     attributes: Attribute[];

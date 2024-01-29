@@ -23,3 +23,24 @@ export interface Attribute {
     display: boolean;
     value: unknown;
 }
+
+export interface GoogleVisionProductSearchSingleResult {
+    product_labels: Array<{ key: string; value: string }>;
+    name: string;
+    display_name: string;
+    description: string;
+    score: number;
+    image: string;
+    is_item_group: boolean;
+    item_group_id: string | null;
+    is_item_in_catalog: boolean;
+    item_id: string | null;
+}
+export interface VisionProductSearchSingleProductResults {
+    bounding_poly: Array<{ x: number; y: number }>;
+    results: GoogleVisionProductSearchSingleResult[];
+}
+export interface VisionProductSearchResponse {
+    image: string;
+    products: VisionProductSearchSingleProductResults[];
+}
