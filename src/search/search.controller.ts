@@ -1,5 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { SearchService } from './search.service';
+import { GetSeller } from 'src/shared/decorators';
+import { SellerEntity } from 'src/repositories/seller/seller.entity';
 
 @Controller('search/item')
 export class SearchController {
@@ -11,7 +13,18 @@ export class SearchController {
     }
 
     @Post('vision/global')
-    async globalVisionSearch(@Body('image') image: string) {
-        return await this.searchService.visionSearchItem(image);
+    async globalVisionSearch(
+        @Body('image') image: string,
+        @GetSeller(false) seller: SellerEntity,
+    ) {
+        return await this.searchService.visionGlobalSearchItem(image, seller);
+    }
+
+    @Post('vision/catalog')
+    async catalogVisionSearch(
+        @Body('image') image: string,
+        @GetSeller() seller: SellerEntity,
+    ) {
+        return await this.searchService.visionCatalogSearchItem(image, seller);
     }
 }

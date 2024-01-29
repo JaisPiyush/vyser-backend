@@ -13,9 +13,12 @@ export const GetUser = createParamDecorator(
 );
 
 export const GetSeller = createParamDecorator(
-    (data: unknown, ctx: ExecutionContext) => {
+    (throwError: boolean = true, ctx: ExecutionContext) => {
         const request = ctx.switchToHttp().getRequest();
-        if (request.seller === null || request.seller === undefined) {
+        if (
+            (request.seller === null || request.seller === undefined) &&
+            throwError
+        ) {
             throw new HttpException('Seller not found', 404);
         }
         return request.seller;

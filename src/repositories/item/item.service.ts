@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ItemEntity } from './item.entity';
 import { SellerEntity } from '../seller/seller.entity';
 import { CreateItemDto, UpdateItemDto, ViewItemSelects } from './item.dto';
@@ -54,5 +54,21 @@ export class ItemService {
             .set(item)
             .execute();
         return await this.findByItemId(item.id);
+    }
+
+    async findItemsFromCatalogByProductSetReferences(
+        seller: SellerEntity,
+        productSetReferences: string[],
+    ) {
+        return await this.itemRepository.find({
+            where: {
+                seller,
+                product_set_reference: In([...productSetReferences]),
+            },
+            select: {
+                product_set_reference: true,
+                id: true,
+            },
+        });
     }
 }
