@@ -34,7 +34,7 @@ import { ItemEntity } from './repositories/item/item.entity';
                 synchronize: true,
             }),
         }),
-        // AuthModule,
+        AuthModule,
         SellerModule,
         ItemModule,
         SearchModule,

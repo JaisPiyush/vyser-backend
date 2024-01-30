@@ -6,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/repositories/user/user.entity';
 import { LocationEntity } from 'src/repositories/location/location.entity';
 import { SellerEntity } from 'src/repositories/seller/seller.entity';
+import { LocationService } from 'src/repositories/location/location.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, LocationEntity, SellerEntity])],
     providers: [
+        LocationService,
         UserService,
         SellerService,
         {
