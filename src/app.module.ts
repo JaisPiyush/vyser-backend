@@ -14,6 +14,7 @@ import { SellerModule } from './seller/seller.module';
 import { ItemModule } from './item/item.module';
 import { ItemEntity } from './repositories/item/item.entity';
 // import { AuthModule } from './auth/auth.module';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { ItemEntity } from './repositories/item/item.entity';
         SellerModule,
         ItemModule,
         SearchModule,
+        UtilsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

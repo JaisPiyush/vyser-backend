@@ -3,12 +3,20 @@ import { ConfigService } from '@nestjs/config';
 import * as vision from '@google-cloud/vision';
 import { VisionProductSearchSingleProductResults } from 'src/shared/types';
 import { ItemEntity } from 'src/repositories/item/item.entity';
+import { Storage } from '@google-cloud/storage';
+
+export enum GoogleCloudBuckets {
+    VYSER_STORAGE = 'vyser-storage',
+    VYSER_TEMPORARY_IMAGE_BUCKET = 'vyser-temporary-image-bucket',
+}
 
 @Injectable()
 export class GoogleCloudService {
     private readonly imageAnnotationClient: vision.ImageAnnotatorClient;
     private readonly productSearchClient: vision.ProductSearchClient;
     readonly GOOGLE_CLOUD_VISION_BASE_URL = 'https://vision.googleapis.com/v1/';
+    private readonly storageClient: Storage;
+
     constructor(private readonly configService: ConfigService) {
         const keyFilename = this.configService.get(
             'GOOGLE_APPLICATION_DEFAULT_CREDENTIALS',
@@ -19,12 +27,55 @@ export class GoogleCloudService {
         this.productSearchClient = new vision.ProductSearchClient({
             keyFilename: keyFilename,
         });
+        this.storageClient = new Storage({ keyFilename: keyFilename });
     }
 
     getProductReferencesFromSearchResults(response: any) {
         const { productSearchResults } = response;
         const { results } = productSearchResults;
         return results.map((result) => result.product.name);
+    }
+
+    getGSSchemaUriForPublicUrl(publicUrl: string) {
+        return publicUrl.replace('https://storage.googleapis.com/', 'gs://');
+    }
+
+    getPublicUrlForGSSchemaUri(gsSchemaUri: string) {
+        return gsSchemaUri.replace('gs://', 'https://storage.googleapis.com/');
+    }
+
+    getBucketNameAndFileNameFromGSSchemaUri(gsSchemaUri: string) {
+        const bucketName = gsSchemaUri.split('/')[2];
+        const fileName = gsSchemaUri.split('/').slice(3).join('/');
+        return { bucketName, fileName };
+    }
+
+    async deleteImageFromStorage(gsSchemaUri: string) {
+        const { bucketName, fileName } =
+            this.getBucketNameAndFileNameFromGSSchemaUri(gsSchemaUri);
+        const bucket = this.storageClient.bucket(bucketName);
+        await bucket.file(fileName).delete();
+    }
+
+    async uploadImageToStorage(
+        image: Express.Multer.File,
+        name: string,
+        bucketName?: string,
+    ) {
+        bucketName = bucketName || GoogleCloudBuckets.VYSER_STORAGE;
+        const bucket = this.storageClient.bucket(bucketName);
+        const blob = bucket.file(name);
+        const blobStream = blob.createWriteStream({
+            resumable: false,
+        });
+        blobStream.on('error', (err) => {
+            throw err;
+        });
+        blobStream.on('finish', () => {
+            blob.makePublic();
+        });
+        blobStream.end(image.buffer);
+        return blob.publicUrl();
     }
 
     private __formatSingleProductVisionResult(

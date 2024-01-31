@@ -15,8 +15,7 @@ export class CreateLocationDto {
     @IsNotEmpty()
     @IsNumberString()
     area_code: string;
-    @IsDefined()
-    gps: Point;
+    gps?: Point;
 }
 
 export class LocationDto extends CreateLocationDto {

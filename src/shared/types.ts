@@ -7,9 +7,9 @@ export interface MediaFile {
 
 export interface Image {
     url: string;
-    size_type: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'custom';
-    width: string;
-    height: string;
+    size_type?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'custom';
+    width?: string;
+    height?: string;
 }
 
 export interface DescriptorAdditionalDesc {
