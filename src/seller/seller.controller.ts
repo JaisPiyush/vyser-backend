@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Post, Put } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    HttpCode,
+    HttpException,
+    Post,
+    Put,
+} from '@nestjs/common';
 import {
     CreateSellerDto,
     UpdateSellerDto,
@@ -18,18 +26,26 @@ export class SellerController {
         @GetUser() user: User,
         @Body() createSellerDto: CreateSellerDto,
     ) {
-        return await this.sellerService.create(user.id, createSellerDto);
+        const seller = await this.sellerService.create(
+            user.id,
+            createSellerDto,
+        );
+        return seller;
     }
 
     @Get()
     async get(@GetUser() user: User) {
-        return await this.sellerService.get(user.id);
+        const seller = await this.sellerService.get(user.id);
+        if (!seller) {
+            throw new HttpException('Seller not found', 404);
+        }
+        return seller;
     }
     @Put()
     async update(
         @GetSeller() seller: SellerEntity,
         @Body() updateSellerDto: UpdateSellerDto,
     ) {
-        await this.sellerService.update(seller, updateSellerDto);
+        return await this.sellerService.update(seller, updateSellerDto);
     }
 }

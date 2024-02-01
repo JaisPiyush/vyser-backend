@@ -10,10 +10,22 @@ export abstract class DescriptorEntity {
     descriptor_short_desc?: string;
     @Column()
     descriptor_long_desc?: string;
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
     descriptor_media: Array<MediaFile>;
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
     descriptor_images: Image[];
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
     descriptor_additional_desc: DescriptorAdditionalDesc[];
 }

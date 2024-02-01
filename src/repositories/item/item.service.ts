@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ItemEntity } from './item.entity';
@@ -12,17 +12,22 @@ export class ItemService {
         private itemRepository: Repository<ItemEntity>,
     ) {}
 
-    async create(seller: SellerEntity, item: CreateItemDto) {
-        const createdItem = await this.itemRepository.save({
-            ...item,
-            seller,
-        });
+    async create(seller: SellerEntity, createItem: CreateItemDto) {
+        const item = new ItemEntity();
+        Object.assign(item, createItem);
+        item.seller = seller;
+        const createdItem = await this.itemRepository.save(item);
         return createdItem;
     }
 
     async createItemInBulk(seller: SellerEntity, items: CreateItemDto[]) {
         const createdItems = await this.itemRepository.save(
-            items.map((item) => ({ ...item, seller })),
+            items.map((item) => {
+                const _item = new ItemEntity();
+                Object.assign(_item, item);
+                _item.seller = seller;
+                return _item;
+            }),
         );
         return createdItems;
     }
@@ -43,17 +48,15 @@ export class ItemService {
         });
     }
 
-    async update(seller: SellerEntity, item: UpdateItemDto) {
-        await this.itemRepository
-            .createQueryBuilder()
-            .where('id = :id AND seller_id = :seller_id', {
-                id: item.id,
-                seller_id: seller.id,
-            })
-            .update(ItemEntity)
-            .set(item)
-            .execute();
-        return await this.findByItemId(item.id);
+    async update(seller: SellerEntity, updateItem: UpdateItemDto) {
+        const item = await this.itemRepository.preload({
+            id: updateItem.id,
+            ...updateItem,
+        });
+        if (item.seller.id !== seller.id) {
+            throw new ForbiddenException();
+        }
+        return await this.itemRepository.save(item);
     }
 
     async findItemsFromCatalogByProductSetReferences(

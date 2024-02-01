@@ -31,14 +31,38 @@ export class SellerEntity {
     descriptor_short_desc?: string;
     @Column()
     descriptor_long_desc?: string;
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
     descriptor_media: Array<MediaFile>;
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+        transformer: {
+            from: (value: string) => JSON.parse(value),
+            to: (value) => value,
+        },
+    })
     descriptor_images: Image[];
-    @Column({ type: 'json', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
     descriptor_additional_desc: DescriptorAdditionalDesc[];
 
-    @Column({ type: 'jsonb', array: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+        transformer: {
+            from: (value: string) => JSON.parse(value),
+            to: (value) => value,
+        },
+    })
     attributes: Attribute[];
 
     @OneToMany(() => LocationEntity, (location) => location.seller)

@@ -10,11 +10,18 @@ export class LocationService {
         @InjectRepository(LocationEntity)
         private locationRepository: Repository<LocationEntity>,
     ) {}
-    async create(location: CreateLocationDto) {
-        return await this.locationRepository.create(location);
+    async create(createLocation: CreateLocationDto) {
+        const location = new LocationEntity();
+        Object.assign(location, createLocation);
+        return await this.locationRepository.save(location);
     }
 
-    async createBulk(locations: CreateLocationDto[]) {
-        return await this.locationRepository.create(locations);
+    async createBulk(createLocations: CreateLocationDto[]) {
+        const locations = createLocations.map((location) => {
+            const _location = new LocationEntity();
+            Object.assign(_location, location);
+            return _location;
+        });
+        return await this.locationRepository.save(locations);
     }
 }

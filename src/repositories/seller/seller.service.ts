@@ -13,13 +13,15 @@ export class SellerService {
         private locationService: LocationService,
     ) {}
 
-    async create(uid: string, seller: CreateSellerDto) {
+    async create(uid: string, createSeller: CreateSellerDto) {
         const locations = await this.locationService.createBulk(
-            seller.locations,
+            createSeller.locations,
         );
-        seller.uid = uid;
-        seller.locations = locations;
-        return await this.sellerRepository.create(seller);
+        createSeller.uid = uid;
+        createSeller.locations = locations;
+        const seller = new SellerEntity();
+        Object.assign(seller, createSeller);
+        return await this.sellerRepository.save(seller);
     }
 
     async get(uid: string) {
@@ -33,7 +35,9 @@ export class SellerService {
         });
     }
 
-    async update(seller: SellerEntity, updateDto: UpdateSellerDto) {
-        await this.sellerRepository.update(seller.id, updateDto);
+    async update(_seller: SellerEntity, updateDto: UpdateSellerDto) {
+        return await this.sellerRepository.update(_seller.id, {
+            is_store_active: updateDto.is_store_active,
+        });
     }
 }
