@@ -72,7 +72,7 @@ export class GoogleCloudService {
             throw err;
         });
         blobStream.on('finish', () => {
-            blob.makePublic();
+            // blob.makePublic();
         });
         blobStream.end(image.buffer);
         return blob.publicUrl();

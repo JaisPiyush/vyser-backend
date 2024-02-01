@@ -7,6 +7,7 @@ import { User } from 'src/repositories/user/user.entity';
 import { LocationEntity } from 'src/repositories/location/location.entity';
 import { SellerEntity } from 'src/repositories/seller/seller.entity';
 import { LocationService } from 'src/repositories/location/location.service';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, LocationEntity, SellerEntity])],
@@ -15,7 +16,7 @@ import { LocationService } from 'src/repositories/location/location.service';
         UserService,
         SellerService,
         {
-            provide: 'AUTH_GUARD',
+            provide: APP_GUARD,
             useClass: AuthGuard,
         },
     ],
