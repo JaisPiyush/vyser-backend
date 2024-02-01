@@ -1,5 +1,12 @@
-import { Body, Controller, Post, UploadedFile } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Post,
+    UploadedFile,
+    UseInterceptors,
+} from '@nestjs/common';
 import { UtilsService } from './utils.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('utils')
 export class UtilsController {
@@ -16,22 +23,17 @@ export class UtilsController {
         return { url: this.utilService.convertPublicUrlToGSSchemaUri(url) };
     }
 
-    // @Delete('storage')
-    // async deleteImageFromStorage(@Body('url') url: string) {
-    //     return await this.utilService.deleteImageFromStorage(url);
-    // }
-
     @Post('storage')
-    async uploadFileToStorage(
-        @Body('name') name: string,
-        @Body('is_temp') isTemp: boolean = false,
-        @UploadedFile() file: Express.Multer.File,
-    ) {
-        if (isTemp) {
-            return {
-                url: await this.utilService.uploadImageToTemporaryBucket(file),
-            };
-        }
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFileToStorage(@UploadedFile() file: Express.Multer.File) {
         return { url: await this.utilService.uploadImageToStorage(file) };
+    }
+
+    @Post('storage/temp')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFileToTempStorage(@UploadedFile() file: Express.Multer.File) {
+        return {
+            url: await this.utilService.uploadImageToTemporaryBucket(file),
+        };
     }
 }
