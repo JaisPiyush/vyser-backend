@@ -16,7 +16,11 @@ export class UtilsService {
             name,
             bucketName,
         );
-        return publicUrl;
+        return {
+            url: publicUrl,
+            gcSchemaUri:
+                this.googleCloudService.getGSSchemaUriForPublicUrl(publicUrl),
+        };
     }
 
     async uploadImageToStorage(image: Express.Multer.File) {

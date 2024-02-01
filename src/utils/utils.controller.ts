@@ -26,14 +26,12 @@ export class UtilsController {
     @Post('storage')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFileToStorage(@UploadedFile() file: Express.Multer.File) {
-        return { url: await this.utilService.uploadImageToStorage(file) };
+        return await this.utilService.uploadImageToStorage(file);
     }
 
     @Post('storage/temp')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFileToTempStorage(@UploadedFile() file: Express.Multer.File) {
-        return {
-            url: await this.utilService.uploadImageToTemporaryBucket(file),
-        };
+        return await this.utilService.uploadImageToTemporaryBucket(file);
     }
 }
