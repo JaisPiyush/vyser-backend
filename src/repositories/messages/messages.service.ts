@@ -17,7 +17,7 @@ export class MessagesService {
         return this.messagesRepository.save(message);
     }
 
-    async findMessages(
+    async find(
         p1: string,
         p2: string,
         maxResults: number = 10,
