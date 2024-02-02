@@ -15,6 +15,8 @@ import { ItemModule } from './item/item.module';
 import { ItemEntity } from './repositories/item/item.entity';
 // import { AuthModule } from './auth/auth.module';
 import { UtilsModule } from './utils/utils.module';
+import { MessagesModule } from './messages/messages.module';
+import { MessagesEntity } from './repositories/messages/messages.entity';
 
 @Module({
     imports: [
@@ -31,7 +33,13 @@ import { UtilsModule } from './utils/utils.module';
                 username: configService.get('DB_USERNAME'),
                 password: configService.get('DB_PASSWORD'),
                 database: configService.get('DB_NAME'),
-                entities: [User, SellerEntity, LocationEntity, ItemEntity],
+                entities: [
+                    User,
+                    SellerEntity,
+                    LocationEntity,
+                    ItemEntity,
+                    MessagesEntity,
+                ],
                 synchronize: true,
             }),
         }),
@@ -40,6 +48,7 @@ import { UtilsModule } from './utils/utils.module';
         ItemModule,
         SearchModule,
         UtilsModule,
+        MessagesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
