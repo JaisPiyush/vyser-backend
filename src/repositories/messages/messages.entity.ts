@@ -6,7 +6,7 @@ export class MessagesEntity {
     id: string;
     @Column('jsonb')
     message: Record<string, any>;
-    @Column('timestamp', { default: Date.now() })
+    @Column('timestamp', { default: new Date(Date.now()) })
     created_at: Date;
     @Index()
     @Column('varchar')

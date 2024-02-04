@@ -4,6 +4,8 @@ import * as vision from '@google-cloud/vision';
 import { VisionProductSearchSingleProductResults } from 'src/shared/types';
 import { ItemEntity } from 'src/repositories/item/item.entity';
 import { Storage } from '@google-cloud/storage';
+import { SessionsClient } from '@google-cloud/dialogflow-cx';
+import { deserializeChatbotResponseFieldValue } from './deserializer';
 
 export enum GoogleCloudBuckets {
     VYSER_STORAGE = 'vyser-storage',
@@ -16,6 +18,10 @@ export class GoogleCloudService {
     private readonly productSearchClient: vision.ProductSearchClient;
     readonly GOOGLE_CLOUD_VISION_BASE_URL = 'https://vision.googleapis.com/v1/';
     private readonly storageClient: Storage;
+    private readonly dialogflowClient: SessionsClient;
+
+    readonly GOOGLE_CLOUD_STORAGE_BASE_PUBLIC_URL =
+        'https://storage.googleapis.com/';
 
     constructor(private readonly configService: ConfigService) {
         const keyFilename = this.configService.get(
@@ -28,6 +34,10 @@ export class GoogleCloudService {
             keyFilename: keyFilename,
         });
         this.storageClient = new Storage({ keyFilename: keyFilename });
+        this.dialogflowClient = new SessionsClient({
+            keyFilename: keyFilename,
+            apiEndpoint: 'asia-south1-dialogflow.googleapis.com',
+        });
     }
 
     getProductReferencesFromSearchResults(response: any) {
@@ -37,11 +47,17 @@ export class GoogleCloudService {
     }
 
     getGSSchemaUriForPublicUrl(publicUrl: string) {
-        return publicUrl.replace('https://storage.googleapis.com/', 'gs://');
+        return publicUrl.replace(
+            this.GOOGLE_CLOUD_STORAGE_BASE_PUBLIC_URL,
+            'gs://',
+        );
     }
 
     getPublicUrlForGSSchemaUri(gsSchemaUri: string) {
-        return gsSchemaUri.replace('gs://', 'https://storage.googleapis.com/');
+        return gsSchemaUri.replace(
+            'gs://',
+            this.GOOGLE_CLOUD_STORAGE_BASE_PUBLIC_URL,
+        );
     }
 
     getBucketNameAndFileNameFromGSSchemaUri(gsSchemaUri: string) {
@@ -199,5 +215,33 @@ export class GoogleCloudService {
         );
         const results = response?.responses[0] || {};
         return results;
+    }
+
+    async detectIntent(sessionId: string, query: string) {
+        const sessionPath =
+            this.dialogflowClient.projectLocationAgentSessionPath(
+                this.configService.get('GOOGLE_PROJECT_ID'),
+                'asia-south1',
+                'debc41a7-94c2-4cea-a6fd-31d379d0a50f',
+                sessionId,
+            );
+        const request = {
+            session: sessionPath,
+            queryInput: {
+                text: {
+                    text: query,
+                },
+                languageCode: 'en-in',
+            },
+        };
+        const [response] = await this.dialogflowClient.detectIntent(request);
+        const responseMessages = response.queryResult.responseMessages;
+        if (responseMessages.length === 0) {
+            return {};
+        }
+        return deserializeChatbotResponseFieldValue({
+            kind: 'structValue',
+            structValue: responseMessages[0].payload as any,
+        });
     }
 }

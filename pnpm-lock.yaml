@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@google-cloud/dialogflow-cx':
+    specifier: ^4.3.1
+    version: 4.3.1
   '@google-cloud/storage':
     specifier: ^7.7.0
     version: 7.7.0
@@ -631,6 +634,16 @@ packages:
     resolution: {integrity: sha512-DY02CRhOZwpzO36fHpuVysz6JZrscPiBXD0fXp6qSrL9oNOx5KWICKdR95C0lSITzxp0TZosVyHqzatE8JbcjA==}
     dependencies:
       tslib: 2.6.2
+    dev: false
+
+  /@google-cloud/dialogflow-cx@4.3.1:
+    resolution: {integrity: sha512-CEC2P1tQiNCdN+EFPKMzCeVWYZPaKphDZ1k9t4sMgfs6GEVa7J74r07yrdwfWM7JPu6uhEryQlXUkGZYHu3uqw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      google-gax: 4.1.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
     dev: false
 
   /@google-cloud/firestore@7.2.0:
