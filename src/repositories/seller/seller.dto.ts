@@ -1,5 +1,5 @@
 import { IsArray, IsNotEmpty } from 'class-validator';
-import { Attribute, Image, MediaFile } from 'src/shared/types';
+import { Attribute, MediaFile } from 'src/shared/types';
 import { CreateLocationDto, LocationDto } from '../location/location.dto';
 
 export class CreateSellerDto {
@@ -11,7 +11,7 @@ export class CreateSellerDto {
     descriptor_short_desc?: string;
     descriptor_long_desc?: string;
     descriptor_media: MediaFile[];
-    descriptor_images: Image[];
+    descriptor_images: string[];
     attributes: Attribute[];
     @IsArray()
     @IsNotEmpty()

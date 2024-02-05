@@ -41,6 +41,13 @@ export class ItemController {
         return { items: await this.itemService.findAllBySeller(seller) };
     }
 
+    @Post('editable')
+    async getEditableDetails(@Body('id') ids: string[]) {
+        return {
+            items: await this.itemService.getEditableDetailsOfItems(ids),
+        };
+    }
+
     @Put()
     @HttpCode(201)
     async update(
@@ -49,6 +56,15 @@ export class ItemController {
     ) {
         return {
             items: [await this.itemService.update(seller, updateItemDto)],
+        };
+    }
+    @Post('bulk')
+    async createInBulk(
+        @GetSeller() seller: SellerEntity,
+        @Body('items') items: CreateItemDto[],
+    ) {
+        return {
+            items: await this.itemService.createItemInBulk(seller, items),
         };
     }
 }

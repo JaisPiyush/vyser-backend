@@ -17,6 +17,8 @@ import { ItemEntity } from './repositories/item/item.entity';
 import { UtilsModule } from './utils/utils.module';
 import { MessagesModule } from './messages/messages.module';
 import { MessagesEntity } from './repositories/messages/messages.entity';
+import { ProductSetEntity } from './repositories/product-set/product-set.entity';
+import { ProductSetModule } from './product-set/product-set.module';
 
 @Module({
     imports: [
@@ -43,12 +45,28 @@ import { MessagesEntity } from './repositories/messages/messages.entity';
                 synchronize: true,
             }),
         }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            name: 'supabase',
+            useFactory: async (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.get('PRODUCT_DB_HOST'),
+                port: configService.get('PRODUCT_DB_PORT'),
+                username: configService.get('PRODUCT_DB_USERNAME'),
+                password: configService.get('PRODUCT_DB_PASSWORD'),
+                database: configService.get('PRODUCT_DB_NAME'),
+                entities: [ProductSetEntity],
+                synchronize: false,
+            }),
+        }),
         AuthModule,
         SellerModule,
         ItemModule,
         SearchModule,
         UtilsModule,
         MessagesModule,
+        ProductSetModule,
     ],
     controllers: [AppController],
     providers: [AppService],

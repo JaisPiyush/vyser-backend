@@ -40,7 +40,7 @@ export class GoogleCloudService {
         });
     }
 
-    getProductReferencesFromSearchResults(response: any) {
+    getProductReferencesFromSearchResults(response: any): string[] {
         const { productSearchResults } = response;
         const { results } = productSearchResults;
         return results.map((result) => result.product.name);
@@ -94,6 +94,13 @@ export class GoogleCloudService {
         return blob.publicUrl();
     }
 
+    async getImageUriFromReferenceImage(referenceImage: string) {
+        const [res] = await this.productSearchClient.getReferenceImage({
+            name: referenceImage,
+        });
+        return res.uri;
+    }
+
     private __formatSingleProductVisionResult(
         results: any[],
         itemsInCatalog: ItemEntity[],
@@ -121,8 +128,7 @@ export class GoogleCloudService {
                     display_name: result.product.displayName as string,
                     description: result.product.description as string,
                     score: result.score as number,
-                    image: (this.GOOGLE_CLOUD_VISION_BASE_URL +
-                        result.image) as string,
+                    image: result.image as string,
                     is_item_group:
                         product_labels.filter(
                             (product_label) =>
@@ -194,7 +200,7 @@ export class GoogleCloudService {
             this.configService.get('GOOGLE_CLOUD_VISION_LOCATION'),
             this.configService.get('GOOGLE_CLOUD_VISION_PRODUCT_SET_ID'),
         );
-        const content = imageUri;
+        const content = this.getGSSchemaUriForPublicUrl(imageUri);
         const request: vision.protos.google.cloud.vision.v1.IAnnotateImageRequest =
             {
                 image: {

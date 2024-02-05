@@ -2,7 +2,6 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import {
     MediaFile,
     DescriptorAdditionalDesc,
-    Image,
     Attribute,
 } from 'src/shared/types';
 import { LocationEntity } from '../location/location.entity';
@@ -41,12 +40,8 @@ export class SellerEntity {
         type: 'text',
         array: true,
         default: [],
-        transformer: {
-            from: (value: string) => JSON.parse(value),
-            to: (value) => value,
-        },
     })
-    descriptor_images: Image[];
+    descriptor_images: string[];
     @Column({
         type: 'text',
         array: true,

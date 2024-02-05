@@ -3,7 +3,6 @@ import {
     MediaFile,
     DescriptorAdditionalDesc,
     Attribute,
-    Image,
 } from 'src/shared/types';
 
 export class CreateItemDto {
@@ -14,7 +13,7 @@ export class CreateItemDto {
     descriptor_short_desc?: string;
     descriptor_long_desc?: string;
     descriptor_media: Array<MediaFile>;
-    descriptor_images: Image[];
+    descriptor_images: string[];
     descriptor_additional_desc: DescriptorAdditionalDesc[];
     creator: string;
     price: number;
@@ -23,7 +22,14 @@ export class CreateItemDto {
     reorder_level: number;
     is_active: boolean;
     category_ids: string[];
-    attributes: Attribute[];
+    attributes: { attributes: Attribute[] };
+}
+
+export class CreateItemUsingProductReferenceDto {
+    product_set_reference: string;
+    price: number;
+    quantity: number;
+    reorder_level: number;
 }
 
 export class UpdateItemDto {
@@ -35,7 +41,7 @@ export class UpdateItemDto {
     reorder_level?: number;
     is_active?: boolean;
     category_ids?: string[];
-    attributes?: Attribute[];
+    attributes?: { attributes: Attribute[] };
     is_rateable?: boolean;
     is_returnable?: boolean;
 }
@@ -49,7 +55,7 @@ export class ItemDto {
     descriptor_short_desc?: string;
     descriptor_long_desc?: string;
     descriptor_media: Array<MediaFile>;
-    descriptor_images: Image[];
+    descriptor_images: string[];
     descriptor_additional_desc: DescriptorAdditionalDesc[];
     creator: string;
     price: number;
@@ -58,7 +64,7 @@ export class ItemDto {
     reorder_level: number;
     is_active: boolean;
     category_ids: string[];
-    attributes: Attribute[];
+    attributes: { attributes: Attribute[] };
     unit: string;
     is_rateable: boolean;
     is_returnable: boolean;
@@ -87,3 +93,12 @@ export const ViewItemSelects = {
     is_rateable: true,
     is_returnable: true,
 };
+
+export class EditableItemDto {
+    id: string;
+    is_active: boolean;
+    price: number;
+    quantity: number;
+    reorder_level: number;
+    name: string;
+}

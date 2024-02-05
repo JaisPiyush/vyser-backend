@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ItemEntity } from './item.entity';
 import { SellerEntity } from '../seller/seller.entity';
-import { CreateItemDto, UpdateItemDto, ViewItemSelects } from './item.dto';
+import {
+    CreateItemDto,
+    EditableItemDto,
+    UpdateItemDto,
+    ViewItemSelects,
+} from './item.dto';
 
 @Injectable()
 export class ItemService {
@@ -48,6 +53,34 @@ export class ItemService {
         });
     }
 
+    async findItemsByIds(seller: SellerEntity, ids: string[]) {
+        return await this.itemRepository.find({
+            where: {
+                id: In(ids),
+                seller: {
+                    id: seller.id,
+                },
+            },
+            select: ViewItemSelects,
+        });
+    }
+
+    async getEditableDetailsOfItems(ids: string[]): Promise<EditableItemDto[]> {
+        return await this.itemRepository.find({
+            where: {
+                id: In(ids),
+            },
+            select: {
+                id: true,
+                price: true,
+                is_active: true,
+                quantity: true,
+                reorder_level: true,
+                name: true,
+            },
+        });
+    }
+
     async update(seller: SellerEntity, updateItem: UpdateItemDto) {
         const item = await this.itemRepository.preload({
             id: updateItem.id,
@@ -65,7 +98,9 @@ export class ItemService {
     ) {
         return await this.itemRepository.find({
             where: {
-                seller,
+                seller: {
+                    id: seller.id,
+                },
                 product_set_reference: In([...productSetReferences]),
             },
             select: {

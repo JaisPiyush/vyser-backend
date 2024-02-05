@@ -6,12 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SellerEntity } from '../seller/seller.entity';
-import {
-    MediaFile,
-    DescriptorAdditionalDesc,
-    Image,
-    Attribute,
-} from 'src/shared/types';
+import { MediaFile, DescriptorAdditionalDesc } from 'src/shared/types';
 
 @Entity()
 export class ItemEntity {
@@ -53,12 +48,8 @@ export class ItemEntity {
         type: 'text',
         array: true,
         default: [],
-        transformer: {
-            from: (value: string) => JSON.parse(value),
-            to: (value) => value,
-        },
     })
-    descriptor_images: Image[];
+    descriptor_images: string[];
     @Column({
         type: 'text',
         array: true,
@@ -80,8 +71,8 @@ export class ItemEntity {
     is_active: boolean;
     @Column({ type: 'varchar', array: true, default: [] })
     category_ids: string[];
-    @Column({ type: 'text', array: true })
-    attributes: Attribute[];
+    @Column({ type: 'jsonb' })
+    attributes: any;
     @Column()
     unit: string;
     @Column({ default: true })

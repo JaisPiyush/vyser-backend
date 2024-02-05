@@ -45,13 +45,26 @@ export class SearchService {
                       seller,
                       productSetReferences,
                   );
+        const products =
+            this.googleCloudService.formatGlobalProductVisionSearchResponse(
+                results,
+                itemsInCatalog,
+            );
+        for (const index in products) {
+            for (const jIndex in products[index].results) {
+                const product = products[index].results[jIndex];
+                const image =
+                    await this.googleCloudService.getImageUriFromReferenceImage(
+                        product.image,
+                    );
+                product.image =
+                    this.googleCloudService.getPublicUrlForGSSchemaUri(image);
+                products[index].results[jIndex] = product;
+            }
+        }
         return {
-            image: imageUri,
-            products:
-                this.googleCloudService.formatGlobalProductVisionSearchResponse(
-                    results,
-                    itemsInCatalog,
-                ),
+            image: this.googleCloudService.getPublicUrlForGSSchemaUri(imageUri),
+            products,
         };
     }
 
