@@ -42,7 +42,8 @@ export class ItemController {
     }
 
     @Post('editable')
-    async getEditableDetails(@Body('id') ids: string[]) {
+    @HttpCode(201)
+    async getEditableDetails(@Body('ids') ids: string[]) {
         return {
             items: await this.itemService.getEditableDetailsOfItems(ids),
         };
@@ -59,6 +60,7 @@ export class ItemController {
         };
     }
     @Post('bulk')
+    @HttpCode(201)
     async createInBulk(
         @GetSeller() seller: SellerEntity,
         @Body('items') items: CreateItemDto[],

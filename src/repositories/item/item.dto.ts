@@ -22,7 +22,8 @@ export class CreateItemDto {
     reorder_level: number;
     is_active: boolean;
     category_ids: string[];
-    attributes: { attributes: Attribute[] };
+    attributes: { attributes: { key: string; value: unknown }[] };
+    unit: string;
 }
 
 export class CreateItemUsingProductReferenceDto {

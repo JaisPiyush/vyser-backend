@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import {
     ChatbotMessage,
     CreateMessageDto,
@@ -12,6 +12,7 @@ export class MessagesController {
     constructor(private messagesService: MessagesService) {}
 
     @Post('save')
+    @HttpCode(201)
     async create(@Body() messages: CreateMessageDto, @GetUser() user: User) {
         messages.sender = user.id;
         return await this.messagesService.create(messages);
@@ -31,6 +32,7 @@ export class MessagesController {
     }
 
     @Post()
+    @HttpCode(201)
     async detectIntentAndSaveMessages(
         @GetUser() user: User,
         @Body('sessionId') sessionId: string,

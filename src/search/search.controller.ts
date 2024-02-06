@@ -9,7 +9,7 @@ export class SearchController {
 
     @Post('text')
     async textSearch(@Body('name') name: string) {
-        return { items: [await this.searchService.textSearchItem(name)] };
+        return { items: await this.searchService.textSearchItem(name) };
     }
 
     @Post('vision/global')

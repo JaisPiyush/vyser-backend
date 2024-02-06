@@ -42,6 +42,7 @@ export class SellerController {
         return seller;
     }
     @Put()
+    @HttpCode(201)
     async update(
         @GetSeller() seller: SellerEntity,
         @Body() updateSellerDto: UpdateSellerDto,

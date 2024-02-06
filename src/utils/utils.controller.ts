@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    HttpCode,
     Post,
     UploadedFile,
     UseInterceptors,
@@ -24,12 +25,14 @@ export class UtilsController {
     }
 
     @Post('storage')
+    @HttpCode(201)
     @UseInterceptors(FileInterceptor('file'))
     async uploadFileToStorage(@UploadedFile() file: Express.Multer.File) {
         return await this.utilService.uploadImageToStorage(file);
     }
 
     @Post('storage/temp')
+    @HttpCode(201)
     @UseInterceptors(FileInterceptor('file'))
     async uploadFileToTempStorage(@UploadedFile() file: Express.Multer.File) {
         return await this.utilService.uploadImageToTemporaryBucket(file);
