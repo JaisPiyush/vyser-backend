@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ViewItemSelects } from 'src/repositories/item/item.dto';
+// import { ViewItemSelects } from 'src/repositories/item/item.dto';
 import { ItemEntity } from 'src/repositories/item/item.entity';
 import { Repository } from 'typeorm';
 import { GoogleCloudService } from 'src/shared/gc.service';
@@ -18,14 +18,23 @@ export class SearchService {
     ) {}
 
     async textSearchItem(searchText: string) {
-        return await this.itemRepository.find({
-            where: [
+        // return await this.itemRepository.find({
+        //     where: [
+        //         {
+        //             name_tsv: searchText,
+        //         },
+        //     ],
+        //     select: ViewItemSelects,
+        // });
+        return await this.itemRepository
+            .createQueryBuilder('item_entity')
+            .where(
+                "to_tsvector('english', item_entity.name) @@ to_tsquery('english', :searchText)",
                 {
-                    name_tsv: searchText,
+                    searchText,
                 },
-            ],
-            select: ViewItemSelects,
-        });
+            )
+            .getMany();
     }
 
     async visionGlobalSearchItem(
@@ -83,13 +92,26 @@ export class SearchService {
                 seller,
                 productSetReferences,
             );
+        const products =
+            this.googleCloudService.formatCatalogProductVisionSearchResponse(
+                results,
+                itemsInCatalog,
+            );
+        for (const index in products) {
+            for (const jIndex in products[index].results) {
+                const product = products[index].results[jIndex];
+                const image =
+                    await this.googleCloudService.getImageUriFromReferenceImage(
+                        product.image,
+                    );
+                product.image =
+                    this.googleCloudService.getPublicUrlForGSSchemaUri(image);
+                products[index].results[jIndex] = product;
+            }
+        }
         return {
-            image: imageUri,
-            products:
-                this.googleCloudService.formatCatalogProductVisionSearchResponse(
-                    results,
-                    itemsInCatalog,
-                ),
+            image: this.googleCloudService.getPublicUrlForGSSchemaUri(imageUri),
+            products,
         };
     }
 }

@@ -55,11 +55,9 @@ export class SellerEntity {
         default: [],
         transformer: {
             from: (value: string) => {
-                console.log(value);
                 const attrs = (value as unknown as string[]).map((e) =>
                     JSON.parse(e),
                 );
-                console.log(attrs);
                 return attrs;
             },
             to: (value) => value,

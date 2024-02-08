@@ -114,7 +114,15 @@ export class GoogleCloudService {
         const [res] = await this.productSearchClient.getReferenceImage({
             name: referenceImage,
         });
-        return res.uri;
+        return this.replaceOldVisionProductBucket(res.uri);
+    }
+
+    replaceOldVisionProductBucket(uri: string): string {
+        return uri;
+        // return uri.replace(
+        //     'vyser-product-database',
+        //     'vyser-product-database-asia-east1',
+        // );
     }
 
     private __formatSingleProductVisionResult(

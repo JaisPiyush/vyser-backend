@@ -21,6 +21,7 @@ export class ItemService {
         const item = new ItemEntity();
         Object.assign(item, createItem);
         item.seller = seller;
+        item.name_tsv = createItem.name;
         const createdItem = await this.itemRepository.save(item);
         return createdItem;
     }
@@ -30,6 +31,7 @@ export class ItemService {
             items.map((item) => {
                 const _item = new ItemEntity();
                 Object.assign(_item, item);
+                _item.name_tsv = item.name;
                 _item.seller = seller;
                 return _item;
             }),
