@@ -6,32 +6,36 @@ export class UtilsService {
     constructor(private readonly googleCloudService: GoogleCloudService) {}
 
     private async __uploadImage(
+        res: any,
         image: Express.Multer.File,
         bucketName?: string,
         name?: string,
     ) {
         name = name || `${Date.now()}`;
-        const publicUrl = await this.googleCloudService.uploadImageToStorage(
+        await this.googleCloudService.uploadImageToStorage(
+            res,
             image,
             name,
             bucketName,
         );
-        return {
-            url: publicUrl,
-            gcSchemaUri:
-                this.googleCloudService.getGSSchemaUriForPublicUrl(publicUrl),
-        };
+        // return {
+        //     url: publicUrl,
+        //     gcSchemaUri:
+        //         this.googleCloudService.getGSSchemaUriForPublicUrl(publicUrl),
+        // };
     }
 
-    async uploadImageToStorage(image: Express.Multer.File) {
+    async uploadImageToStorage(image: Express.Multer.File, res: any) {
         return await this.__uploadImage(
+            res,
             image,
             GoogleCloudBuckets.VYSER_STORAGE,
         );
     }
 
-    async uploadImageToTemporaryBucket(image: Express.Multer.File) {
+    async uploadImageToTemporaryBucket(image: Express.Multer.File, res) {
         return await this.__uploadImage(
+            res,
             image,
             GoogleCloudBuckets.VYSER_TEMPORARY_IMAGE_BUCKET,
         );

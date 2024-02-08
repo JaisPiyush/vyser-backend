@@ -74,24 +74,40 @@ export class GoogleCloudService {
     }
 
     async uploadImageToStorage(
+        res: any,
         image: Express.Multer.File,
         name: string,
         bucketName?: string,
     ) {
+        console.log(image);
         bucketName = bucketName || GoogleCloudBuckets.VYSER_STORAGE;
         const bucket = this.storageClient.bucket(bucketName);
         const blob = bucket.file(name);
+        const filenameArray = image.originalname.split('/');
+        const fileName = filenameArray[filenameArray.length - 1];
+        const fileNameSplit = fileName.split('.');
+        const extension = fileNameSplit[fileNameSplit.length - 1];
+        const mimeType = `image/${extension}`;
         const blobStream = blob.createWriteStream({
             resumable: false,
+            contentType:
+                image.mimetype === 'application/octet-stream'
+                    ? mimeType
+                    : image.mimetype,
         });
         blobStream.on('error', (err) => {
             throw err;
         });
         blobStream.on('finish', () => {
             // blob.makePublic();
+            console.log('uploaded');
+            res.status(201).send({
+                url: blob.publicUrl(),
+                gsSchemaUri: this.getGSSchemaUriForPublicUrl(blob.publicUrl()),
+            });
         });
         blobStream.end(image.buffer);
-        return blob.publicUrl();
+        // return blob.publicUrl();
     }
 
     async getImageUriFromReferenceImage(referenceImage: string) {

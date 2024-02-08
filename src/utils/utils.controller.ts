@@ -3,6 +3,7 @@ import {
     Controller,
     HttpCode,
     Post,
+    Res,
     UploadedFile,
     UseInterceptors,
 } from '@nestjs/common';
@@ -27,14 +28,20 @@ export class UtilsController {
     @Post('storage')
     @HttpCode(201)
     @UseInterceptors(FileInterceptor('file'))
-    async uploadFileToStorage(@UploadedFile() file: Express.Multer.File) {
-        return await this.utilService.uploadImageToStorage(file);
+    async uploadFileToStorage(
+        @UploadedFile() file: Express.Multer.File,
+        @Res() res,
+    ) {
+        return await this.utilService.uploadImageToStorage(file, res);
     }
 
     @Post('storage/temp')
     @HttpCode(201)
     @UseInterceptors(FileInterceptor('file'))
-    async uploadFileToTempStorage(@UploadedFile() file: Express.Multer.File) {
-        return await this.utilService.uploadImageToTemporaryBucket(file);
+    async uploadFileToTempStorage(
+        @UploadedFile() file: Express.Multer.File,
+        @Res() res,
+    ) {
+        return await this.utilService.uploadImageToTemporaryBucket(file, res);
     }
 }
